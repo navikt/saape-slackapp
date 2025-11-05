@@ -217,7 +217,7 @@ const sanitizeProjectName = (projectName) => {
   
   return projectName
     .toLowerCase()
-    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/[^a-z0-9-æøå]/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
     .substring(0, 40) || 'prosjekt';

@@ -386,8 +386,6 @@ class SlackListsManager {
     }
   }
 
-  // Removed: fetchSchemaViaInfo (slackLists.info is not supported)
-
   async fetchSchemaViaItemsList() {
     try {
       const result = await this.callSlackApi('slackLists.items.list', {
@@ -417,7 +415,7 @@ class SlackListsManager {
       const botUserId = botInfo.user_id;
 
       const fields = [
-        buildRichTextField(this.projectColumnId, '📋 Eksempel - Slett denne raden'),
+        buildRichTextField(this.projectColumnId, '📋 Eksempel - Ikke slett denne raden'),
         buildRichTextField(this.requestIdColumnId, 'DEMO-000'),
         {
           column_id: this.statusColumnId,

@@ -46,7 +46,7 @@ module.exports = function registerCommands(app, config = {}) {
     const teamMembers = values?.team_members?.team_members_select?.selected_users || [];
     const fullReport = values?.full_report?.full_report_choice?.selected_option?.value || 'unspecified';
     const additionalInfo = values?.additional_info?.additional_info_input?.value?.trim()
-      || 'Fyll inn så godt du kan. Ved godkjenning opprettes en Slack-kanal for pentesten hvor du kan supplere informasjon.';
+      || 'Ingen tilleggskommentarer';
 
     const requestId = `PT-${Date.now()}`;
     logger.info(`New pentest request initiated: ${requestId} by ${user.id}`);

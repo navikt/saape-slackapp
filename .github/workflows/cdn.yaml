@@ -1,6 +1,7 @@
 name: Push to CDN
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'main'
