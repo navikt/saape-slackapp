@@ -1,3 +1,319 @@
+const getPreparationRequirements = (pentestType) => {
+  const baseRequirements = {
+    scope: [],
+    documentation: [
+      '• Teknisk dokumentasjon (Confluence, GitHub README, arkitekturdiagrammer)',
+      '• Lenker til relevante repositories',
+      '• Beskrivelse av applikasjonens arkitektur'
+    ],
+    access: []
+  };
+
+  switch (pentestType) {
+    case 'web_app':
+    case 'api':
+      baseRequirements.scope = [
+        '• Komplette URL-er til alle miljøer (dev, test, staging, prod)',
+        '• API-endepunkter (inkl. Swagger/OpenAPI-dokumentasjon hvis tilgjengelig)',
+        '• Oversikt over hvilke sider/funksjonalitet som skal testes',
+        '• Tydelig avgrensning: Hva inngår og hva inngår IKKE?',
+        '• Eksempler på viktige brukerreiser'
+      ];
+      baseRequirements.access = [
+        '• Testbrukere for alle relevante roller (admin, bruker, osv.)',
+        '• API-nøkler/clients for testing hvis aktuelt',
+        '• Testdata tilgjengelig i testmiljø',
+        '• Informasjon om autentiseringsmetode',
+        '• Ved bruk av Maskinporten: Vi har syntetiske organisasjoner, 313575551 og 314573528',
+        '• IP-whitelist/VPN-krav hvis relevant'
+      ];
+      break;
+
+    case 'mobile_app':
+      baseRequirements.scope = [
+        '• Plattform(er): iOS, Android eller begge',
+        '• Installasjonsfiler eller TestFlight/Google Play beta-lenker',
+        '• Oversikt over funksjonalitet som skal testes',
+        '• Backend API-endepunkter hvis relevant'
+      ];
+      baseRequirements.access = [
+        '• Testbrukere med ulike roller',
+        '• Testdata i testmiljø',
+        '• Informasjon om hvordan appen autentiserer',
+        '• Backend API-tilganger hvis nødvendig'
+      ];
+      break;
+
+    case 'network':
+      baseRequirements.scope = [
+        '• IP-adresser/subnett som skal testes',
+        '• Nettverkstopologi/diagram',
+        '• Tydelig avgrensning av testområde',
+        '• Hvilke systemer/tjenester som kjører'
+      ];
+      baseRequirements.access = [
+        '• VPN-tilgang til nettverket hvis nødvendig',
+        '• IP-whitelist for testverktøy',
+        '• Koordinering med drift/NOC',
+        '• Varslingsprosedyrer'
+      ];
+      break;
+
+    case 'cloud':
+      baseRequirements.scope = [
+        '• Skyplattform (Azure, AWS, GCP, etc.)',
+        '• Ressurser/tjenester som skal testes',
+        '• Arkitekturdiagrammer',
+        '• Tydelig avgrensning av testområde'
+      ];
+      baseRequirements.access = [
+        '• Tilganger til skyplattform (read-only eller begrenset)',
+        '• Informasjon om IAM/RBAC-oppsett',
+        '• Testmiljø separert fra produksjon',
+        '• Kontaktperson med sky-tilganger'
+      ];
+      break;
+
+    default:
+      baseRequirements.scope = [
+        '• Detaljert beskrivelse av hva som skal testes',
+        '• URL-er, endepunkter eller systemer',
+        '• Tydelig avgrensning: Hva inngår og hva inngår IKKE?',
+        '• Eksempler på viktige brukerreiser/bruksmønstre'
+      ];
+      baseRequirements.access = [
+        '• Testbrukere for alle relevante roller',
+        '• Testdata tilgjengelig i testmiljø',
+        '• API-nøkler/clients hvis relevant',
+        '• Informasjon om tilgangsstyring og autentisering'
+      ];
+  }
+
+  return baseRequirements;
+};
+
+const getPreparationTemplate = (pentestType) => {
+  const templates = {
+    web_app: `## Scope
+**URL-er til testmiljøer:**
+- Dev: 
+- Test: 
+- Staging: 
+- Prod (hvis aktuelt): 
+
+**API-endepunkter:**
+- Swagger/OpenAPI: 
+- Base URL: 
+
+**Hva inngår i testen:**
+- 
+
+**Hva inngår IKKE:**
+- 
+
+**Viktige brukerreiser:**
+1. 
+2. 
+
+## DOKUMENTASJON
+**Teknisk dokumentasjon:**
+- Confluence: 
+- GitHub: 
+- Annet: 
+
+**Arkitektur:**
+- 
+
+## TILGANGER
+**Testbrukere (brukernavn, ikke passord!):**
+- Admin: 
+- Vanlig bruker: 
+- Andre roller: 
+- Dolly syntetiske brukere: [Bruker dere Dolly? Hvilke testpersoner skal vi bruke?]
+- IDA-testidenter: [Har dere egne IDA-identer? Hvilke skal vi bruke?]
+
+**Autentisering:**
+- Type (OAuth, Maskinporten, etc.): 
+- Maskinporten: [Trenger dere dette? Vi har syntetiske org.nr.]
+
+**API-tilganger:**
+- API-nøkler/clients: [Hvordan får vi dette?]
+
+**Nettverk:**
+- IP-whitelist nødvendig? 
+- VPN-tilgang? 
+
+**Testdata:**
+- Finnes i miljø: 
+- Må opprettes: `,
+
+    api: `## Scope
+**API-endepunkter:**
+- Swagger/OpenAPI: 
+- Base URL: 
+- Hvilke endepunkter skal testes: 
+
+**Hva inngår IKKE:**
+- 
+
+## DOKUMENTASJON
+**Teknisk dokumentasjon:**
+- Confluence: 
+- GitHub: 
+- API-dokumentasjon: 
+
+**Arkitektur:**
+- 
+
+## TILGANGER
+**Autentisering:**
+- Type (OAuth, Maskinporten, API keys, etc.): 
+- Maskinporten: [Trenger dere dette? Vi har syntetiske org.nr.]
+
+**API-tilganger:**
+- API-nøkler/clients: [Hvordan får vi dette?]
+- Testbrukere med ulike roller hvis aktuelt: 
+- Dolly syntetiske brukere: [Bruker dere Dolly? Hvilke testpersoner skal vi bruke?]
+- IDA-testidenter: [Har dere egne IDA-identer? Hvilke skal vi bruke?]
+
+**Testdata:**
+- Finnes i miljø: 
+- Må opprettes: `,
+
+    mobile_app: `## Scope
+**Plattform:**
+- [ ] iOS
+- [ ] Android
+
+**App-tilgang:**
+- TestFlight/beta-lenke: 
+- Eller installasjonsfiler: 
+
+**Funksjonalitet som skal testes:**
+- 
+
+**Backend API:**
+- Endepunkter: 
+- Swagger: 
+
+## DOKUMENTASJON
+**Teknisk dokumentasjon:**
+- Confluence: 
+- GitHub: 
+
+**Arkitektur:**
+- 
+
+## TILGANGER
+**Testbrukere:**
+- Bruker 1: 
+- Bruker 2: 
+- Dolly syntetiske brukere: [Bruker dere Dolly? Hvilke testpersoner skal vi bruke?]
+- IDA-testidenter: [Har dere egne IDA-identer? Hvilke skal vi bruke?]
+
+**Backend API-tilganger:**
+- 
+
+**Testdata:**
+- `,
+
+    network: `## Scope
+**IP-adresser/subnett:**
+- 
+
+**Nettverkstopologi:**
+- Diagram: 
+- Beskrivelse: 
+
+**Systemer/tjenester:**
+- 
+
+**Hva inngår IKKE:**
+- 
+
+## DOKUMENTASJON
+**Nettverksdokumentasjon:**
+- Confluence: 
+- Diagrammer: 
+
+## TILGANGER
+**VPN-tilgang:**
+- Nødvendig? 
+- Hvordan får vi tilgang: 
+
+**IP-whitelist:**
+- Våre test-IPer må whitelistes: 
+
+**Koordinering:**
+- Kontakt drift/NOC: 
+- Varslingsprosedyrer: `,
+
+    cloud: `## Scope
+**Skyplattform:**
+- [ ] Azure
+- [ ] AWS
+- [ ] GCP
+- [ ] Annet: 
+
+**Ressurser/tjenester som skal testes:**
+- 
+
+**Hva inngår IKKE:**
+- 
+
+## DOKUMENTASJON
+**Arkitektur:**
+- Diagrammer: 
+- Confluence: 
+- GitHub: 
+
+## TILGANGER
+**Sky-tilganger:**
+- Type tilgang (read-only/begrenset): 
+- Hvordan får vi tilgang: 
+
+**IAM/RBAC:**
+- Oppsett: 
+
+**Testmiljø:**
+- Separert fra prod? 
+- Kontaktperson med tilganger: `,
+
+    other: `## Scope
+**Hva skal testes:**
+- 
+
+**URL-er/endepunkter/systemer:**
+- 
+
+**Hva inngår IKKE:**
+- 
+
+**Viktige brukerreiser/bruksmønstre:**
+- 
+
+## DOKUMENTASJON
+**Teknisk dokumentasjon:**
+- Confluence: 
+- GitHub: 
+- Annet: 
+
+## TILGANGER
+**Testbrukere:**
+- 
+- Dolly syntetiske brukere: [Bruker dere Dolly? Hvilke testpersoner skal vi bruke?]
+- IDA-testidenter: [Har dere egne IDA-identer? Hvilke skal vi bruke?]
+
+**API-nøkler/tilganger:**
+- 
+
+**Testdata:**
+- `
+  };
+
+  return templates[pentestType] || templates.other;
+};
+
 const buildAdminRequestMessage = (requestId, user, data) => ({
   text: `Ny pentest-forespørsel: ${data.projectName || 'Uten navn'}`,
   blocks: [
@@ -32,8 +348,10 @@ const buildAdminRequestMessage = (requestId, user, data) => ({
 });
 
 const buildChannelWelcomeMessage = (requestId, request, approver, jiraUrl = null, checklistSelections = []) => {
+  const requirements = getPreparationRequirements(request.pentestType);
+  
   const blocks = [
-    { type: 'header', text: { type: 'plain_text', text: `🔒 Pentest: ${request.projectName}`, emoji: true } },
+    { type: 'header', text: { type: 'plain_text', text: `Pentest: ${request.projectName}`, emoji: true } },
     {
       type: 'section',
       fields: [
@@ -52,17 +370,21 @@ const buildChannelWelcomeMessage = (requestId, request, approver, jiraUrl = null
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `*Sjekkliste for bestiller: Hva ønsker vi - og hva forventes?*  
-Dette er en veiledende liste over hva som er nyttig å ha på plass før oppstart. Du trenger ikke ha alt klart nå - terskelen skal være lav. Det viktigste er at du bestiller og viser interesse; vi avklarer detaljer fortløpende her i kanalen.
+        text: `*📋 Forberedelser før oppstartsmøte*
 
-• *Definer scope:* Tydelige URL-er, API-endepunkter, relevante miljøer (dev/test/staging/prod), hva som inngår/ikke inngår, og gjerne eksempler på viktige brukerreiser  
-• *Tilganger / testbrukere / testdata:* Testkontoer (roller), API-nøkler/clients, ev. IP-whitelist/VPN, og hvordan dette utstedes  
-• *Tidspunkt for test:* Ønsket tidsrom, blackout-perioder (kritiske leveranser, freeze), og relevante releaseplaner  
-• *Kontaktpersoner:* Teknisk kontakt, produkt/PO, og ev. sikkerhetskontakt som kan svare raskt ved behov  
-• *Spesielle hensyn:* Ytelse/driftsvindu, logging/varsling, DDoS-beskyttelse, datahåndtering eller andre praktiske forhold  
-• *Ønsket leveranse:* Jira-saker, fullstendig rapport, demo/gjennomgang - si ifra hva som passer best
+Du trenger ikke ha alt klart nå, men *før vi kaller inn til oppstartsmøte* ønsker vi følgende informasjon. Ta dialogen her i kanalen hvis du er usikker på noe!
 
-💬 Usikker på noe? Skriv kort hva det gjelder og hva du vet - så hjelper vi deg med resten.`
+*1. Scope*
+${requirements.scope.join('\n')}
+
+*2. Dokumentasjon*
+${requirements.documentation.join('\n')}
+
+*3. Tilganger og testdata*
+${requirements.access.join('\n')}
+
+*Når dette er klart:*
+Vi kaller inn til oppstartsmøte hvor vi går gjennom informasjonen sammen, avklarer eventuelle mangler, og ber dere om en demo av applikasjonen for å forstå typiske brukerreiser og flyt.`
       }
     },
     {
@@ -73,16 +395,21 @@ Dette er en veiledende liste over hva som er nyttig å ha på plass før oppstar
           type: 'checkboxes',
           action_id: 'requester_checklist',
           options: [
-            { text: { type: 'plain_text', text: 'Definer scope' }, value: 'scope' },
-            { text: { type: 'plain_text', text: 'Tilganger / testdata' }, value: 'access' },
-            { text: { type: 'plain_text', text: 'Tidspunkt for test' }, value: 'timing' },
-            { text: { type: 'plain_text', text: 'Kontaktpersoner' }, value: 'contacts' },
-            { text: { type: 'plain_text', text: 'Spesielle hensyn' }, value: 'considerations' }
+            { text: { type: 'plain_text', text: 'Scope (URL-er, endepunkter, avgrensning)' }, value: 'scope' },
+            { text: { type: 'plain_text', text: 'Dokumentasjon (teknisk, Confluence, GitHub)' }, value: 'documentation' },
+            { text: { type: 'plain_text', text: 'Tilganger (testbrukere, roller, testdata)' }, value: 'access' }
           ],
           ...(Array.isArray(checklistSelections) && checklistSelections.length
             ? {
               initial_options: checklistSelections.map((v) => ({
-                text: { type: 'plain_text', text: v === 'scope' ? 'Definer scope' : v === 'access' ? 'Tilganger / testdata' : v === 'timing' ? 'Tidspunkt for test' : v === 'contacts' ? 'Kontaktpersoner' : 'Spesielle hensyn' },
+                text: { 
+                  type: 'plain_text', 
+                  text: v === 'scope' 
+                    ? 'Scope (URL-er, endepunkter, avgrensning)' 
+                    : v === 'documentation' 
+                    ? 'Dokumentasjon (teknisk, Confluence, GitHub)' 
+                    : 'Tilganger (testbrukere, roller, testdata)'
+                },
                 value: v
               }))
             }
@@ -95,7 +422,7 @@ Dette er en veiledende liste over hva som er nyttig å ha på plass før oppstar
       elements: [
         {
           type: 'mrkdwn',
-          text: `Sjekkliste: ${Array.isArray(checklistSelections) ? checklistSelections.length : 0}/5 fullført`
+          text: `Påkrevd før oppstartsmøte: ${Array.isArray(checklistSelections) ? checklistSelections.length : 0}/3 fullført`
         }
       ]
     },
@@ -121,8 +448,8 @@ Velkommen! SåPe vil koordinere pentest-aktivitetene her i kanalen.`
   blocks.push({
     type: 'actions',
     elements: [
-      { type: 'button', text: { type: 'plain_text', text: '📋 Oppdater status', emoji: true }, action_id: 'update_status', value: requestId },
-      { type: 'button', text: { type: 'plain_text', text: '📄 Vis forespørselsdetaljer', emoji: true }, action_id: 'view_details', value: requestId }
+      { type: 'button', text: { type: 'plain_text', text: 'Oppdater status', emoji: true }, action_id: 'update_status', value: requestId },
+      { type: 'button', text: { type: 'plain_text', text: 'Vis forespørselsdetaljer', emoji: true }, action_id: 'view_details', value: requestId }
     ]
   });
 
@@ -194,22 +521,23 @@ function buildAppHomeView(userId, myRequests = []) {
       type: 'mrkdwn',
       text: `*Bestill pentest*
 
-*Målet er lav terskel: det viktigste er å melde fra om et behov, så tar vi dialogen sammen etterpå.* Du trenger ikke ha alle detaljer klare for å sende inn en forespørsel.
+* Du trenger ikke ha alle detaljer klare for å sende inn en forespørsel. Det viktigste er å melde fra om et behov - så tar vi dialogen sammen etterpå.
 
 *Hva skjer når du bestiller?*
-1.  Du fyller ut det du vet i skjemaet.
-2.  Vi oppretter en privat Slack-kanal og en Jira-sak for dialog og oppfølging.
-3.  Sammen avklarer vi omfang, planlegger testen og finner et tidspunkt som passer.
+1.  Du fyller ut det du vet i skjemaet (selv om det bare er grunnleggende info)
+2.  Vi oppretter en privat Slack-kanal og en Jira-sak
+3.  I kanalen får du en sjekkliste med hva vi trenger før oppstartsmøte
+4.  Du følger opp med informasjonen i kanalen
+5.  Når det er på plass, kaller vi inn til oppstartsmøte
 
-*For å gjøre prosessen enda smidigere, er det supert om du har tenkt på:*
-•   *Hva skal testes?* (F.eks. en nettside, et API, en app)
-•   *Tilganger:* Trenger vi testbrukere eller spesielle tilganger? (Ikke del passord i bestillingen!)
-•   *Kontaktpersoner:* Hvem fra ditt team kan vi kontakte ved behov?
-
-Igjen, ingenting av dette er et krav for å starte. Send inn det du har, selv om det bare er en idé. Vi er her for å hjelpe!
+*Hva trenger vi før oppstartsmøte?*
+Dette får du detaljert beskrivelse av i kanalen, men i korte trekk:
+•   *Scope:* Komplette URL-er, API-endepunkter, tydelig avgrensning
+•   *Dokumentasjon:* Teknisk dokumentasjon, GitHub/Confluence-lenker
+•   *Tilganger:* Testbrukere for alle roller, testdata i miljø
 
 *Viktig: Ikke del sensitiv informasjon*
-Husk at du ikke skal dele konfidensiell eller taushetsbelagt informasjon i Slack. For dette bruker vi andre fagsystemer. Les mer i <https://navno.sharepoint.com/sites/intranett-it/SitePages/Slik-bruker-vi-Slack-i-Nav.aspx|retningslinjene for bruk av Slack>.
+Ikke del passord eller konfidensiell informasjon i Slack. Les mer i <https://navno.sharepoint.com/sites/intranett-it/SitePages/Slik-bruker-vi-Slack-i-Nav.aspx|retningslinjene for bruk av Slack>.
 
 For støtte, kontakt #team-sårbarhetsstyring-og-penetrasjonstesting.`
     }
@@ -221,10 +549,35 @@ For støtte, kontakt #team-sårbarhetsstyring-og-penetrasjonstesting.`
   };
 }
 
+const buildPreparationTemplateMessage = (pentestType) => {
+  const template = getPreparationTemplate(pentestType);
+  return {
+    text: 'Her er en mal du kan fylle ut',
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `📝 *Her er en mal for å samle informasjonen vi trenger*\n\nKopier teksten under, fyll ut det du kan, og send det tilbake i denne kanalen. Ikke bekymre deg hvis du ikke kan fylle ut alt - vi går gjennom det sammen!\n\n*Viktig:* Ikke skriv passord eller sensitiv informasjon her i Slack.`
+        }
+      },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `\`\`\`\n${template}\n\`\`\``
+        }
+      }
+    ]
+  };
+};
+
 module.exports = {
   buildAdminRequestMessage,
   buildChannelWelcomeMessage,
   buildApprovedMessage,
   buildRejectedMessage,
-  buildAppHomeView
+  buildAppHomeView,
+  buildPreparationTemplateMessage,
+  getPreparationTemplate
 };

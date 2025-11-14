@@ -18,24 +18,21 @@ const getPentestRequestModal = () => ({
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `*Bestill en pentest eller start en dialog*
+        text: `*Bestill pentest*
 
-Dette skjemaet er den raskeste veien for å komme i gang med en sikkerhetstest. Det er helt uforpliktende og ment for å melde interesse - du trenger *ikke* ha alle svarene klare nå.
+Du trenger *ikke* ha alle detaljer klare nå. Fyll ut det du vet, så tar vi resten av dialogen i en privat kanal etterpå.
 
 *Hva skjer etter at du sender inn?*
-1.  Vi mottar forespørselen og oppretter en privat Slack-kanal og en Jira-sak.
-2.  Du og teamet ditt blir invitert, sammen med sikkerhetsteamet.
-3.  I kanalen avklarer vi scope, finner riktig tidspunkt og planlegger testen sammen.
+1.  Vi oppretter en privat Slack-kanal og en Jira-sak
+2.  Du og teamet ditt blir invitert sammen med SåPe
+3.  I kanalen får du en sjekkliste med hva vi trenger før oppstartsmøte:
+    • Scope (URL-er, endepunkter, avgrensning)
+    • Dokumentasjon (teknisk, Confluence, GitHub)
+    • Tilganger (testbrukere, testdata)
+4.  Du følger opp med informasjonen i kanalen
+5.  Når det er på plass, kaller vi inn til oppstartsmøte
 
-*For å gjøre prosessen smidigere, tenk gjerne gjennom:*
-*   *Hva skal testes?* (F.eks. en nettside, et API, en app)
-*   *Tilganger:* Trenger vi testbrukere eller spesielle tilganger? (Ikke del passord her!)
-*   *Miljø:* Finnes det et eget testmiljø vi kan bruke?
-*   *Team:* Hvem fra ditt team bør være involvert?
-
-Jo mer informasjon du gir oss nå, jo raskere kan vi hjelpe deg. Men det viktigste er at du melder fra - så tar vi resten av dialogen i etterkant.
-
-*Viktig:* Ikke skriv sensitiv informasjon som passord, personopplysninger eller forretningshemmeligheter i dette skjemaet.`
+*Viktig:* Ikke skriv sensitiv informasjon som passord, personopplysninger eller lignende i dette skjemaet.`
       }
     },
     {
@@ -122,6 +119,13 @@ Jo mer informasjon du gir oss nå, jo raskere kan vi hjelpe deg. Men det viktigs
       optional: false
     },
     {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: '*Om fullstendig rapport:* De fleste team klarer seg med Jira-saker for teknisk oppfølging. En rapport (ca. 1 dag å produsere) gir mest verdi når du skal dele funn med ledelse, trenger dokumentasjon for compliance, eller skal presentere for folk utenfor teamet. Velg "Nei" hvis det kun er teamet som skal følge opp.'
+      }
+    },
+    {
       type: 'input',
       block_id: 'full_report',
       element: {
@@ -142,11 +146,7 @@ Jo mer informasjon du gir oss nå, jo raskere kan vi hjelpe deg. Men det viktigs
         type: 'plain_text',
         text: 'Fullstendig rapport?'
       },
-      hint: {
-        type: 'plain_text',
-        text: 'Velg om du ønsker en rapport (PDF) i tillegg til Jira-saker'
-      },
-      optional: true
+      optional: false
     },
     {
       type: 'input',
