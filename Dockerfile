@@ -1,10 +1,10 @@
-FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:22-slim
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:22-slim as deps
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-FROM node:20-alpine AS runner
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:22-slim as runner
 WORKDIR /app
 
 ENV NODE_ENV=production \
